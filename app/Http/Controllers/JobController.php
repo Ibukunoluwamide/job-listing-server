@@ -14,7 +14,7 @@ class JobController extends Controller
     public function index()
     {
         // Retrieve all jobs
-        $jobs = DB::select('SELECT * FROM jobs');
+        $jobs = DB::select('SELECT * FROM jobs ORDER BY job_id DESC');
 
         // Return jobs as a JSON response
         return Response::json($jobs, 200);
