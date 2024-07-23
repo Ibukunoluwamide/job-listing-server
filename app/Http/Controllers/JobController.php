@@ -36,7 +36,7 @@ class JobController extends Controller
     {
         // Insert data into the database
         $insert = DB::insert(
-            'INSERT INTO jobs (title, description, location, salary, requirements, company, email) VALUES (?, ?, ?, ?, ?, ?, ?)', 
+            'INSERT INTO jobs (title, description, location, salary, requirements, company, email, jobType, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', 
             [
                 $request->title,
                 $request->description,
@@ -44,7 +44,9 @@ class JobController extends Controller
                 $request->salary,
                 $request->requirements,
                 $request->company,
-                $request->email
+                $request->email,
+                $request->jobType,
+                $request->user_id
             ]
         );
 

@@ -44,12 +44,10 @@ class UserController extends Controller
     
         // Insert data into the database
         $insert = DB::insert(
-            'INSERT INTO users (name, email, city, state, password) VALUES (?, ?, ?, ?, ?)', 
+            'INSERT INTO users (name, email, password) VALUES (?, ?, ?)', 
             [
                 $request->name,
                 $request->email,
-                $request->city,
-                $request->state,
                 bcrypt($request->password), // Encrypt password
             ]
         );
@@ -94,12 +92,10 @@ class UserController extends Controller
     {
         // Update user data in the database
         $update = DB::update(
-            'UPDATE users SET name = ?, email = ?, city = ?, state = ?, password = ? WHERE user_id = ?', 
+            'UPDATE users SET name = ?, email = ?, password = ? WHERE user_id = ?', 
             [
                 $request->name,
                 $request->email,
-                $request->city,
-                $request->state,
                 bcrypt($request->password), // Encrypt password
                 $id
             ]
