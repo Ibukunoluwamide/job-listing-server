@@ -5,26 +5,26 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Log;
 
-class JobController extends Controller
-{
+class JobController extends Controller {
     /**
-     * Display a listing of all jobs.
-     */
-    public function index()
-    {
+    * Display a listing of all jobs.
+    */
+
+    public function index() {
         // Retrieve all jobs
-        $jobs = DB::select('SELECT * FROM jobs ORDER BY job_id DESC');
+        $jobs = DB::select( 'SELECT * FROM jobs ORDER BY job_id DESC' );
 
         // Return jobs as a JSON response
-        return Response::json($jobs, 200);
+        return Response::json( $jobs, 200 );
     }
 
     /**
-     * Show the form for creating a new job.
-     */
-    public function create()
-    {
+    * Show the form for creating a new job.
+    */
+
+    public function create() {
         // Typically, this would return a view for creating a job
         // Since we're dealing with an API, you might not need this method
     }
@@ -36,7 +36,7 @@ class JobController extends Controller
     {
         // Insert data into the database
         $insert = DB::insert(
-            'INSERT INTO jobs (title, description, location, salary, requirements, company, email, jobType, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+            'INSERT INTO jobs ( title, description, location, salary, requirements, company, email, jobType, user_id ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? )', 
             [
                 $request->title,
                 $request->description,
@@ -64,7 +64,7 @@ class JobController extends Controller
     public function show(string $id)
     {
         // Retrieve the job by ID
-        $job = DB::select('SELECT * FROM jobs WHERE job_id = ?', [$id]);
+        $job = DB::select('SELECT * FROM jobs WHERE user_id = ? ORDER BY job_id DESC', [$id]);
 
         // Check if job was found
         if ($job) {
@@ -84,46 +84,51 @@ class JobController extends Controller
     }
 
     /**
-     * Update the specified job in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        // Update job data in the database
-        $update = DB::update(
-            'UPDATE jobs SET title = ?, description = ?, location = ?, salary = ?, requirements = ?, company = ?, email = ? WHERE job_id = ?', 
-            [
-                $request->title,
-                $request->description,
-                $request->location,
-                $request->salary,
-                $request->requirements,
-                $request->company,
-                $request->email,
-                $id
-            ]
-        );
+    * Update the specified job in storage.
+    */
 
-        // Check if the update was successful
-        if ($update) {
-            return Response::json(['status' => true, 'message' => 'Job updated successfully'], 200);
-        } else {
-            return Response::json(['status' => false, 'message' => 'Failed to update job'], 500);
+
+    public function update(Request $request, string $id) {
+        try {
+            $update = DB::update(
+                'UPDATE jobs SET title = ?, description = ?, location = ?, salary = ?, requirements = ?, company = ?, email = ?, jobType = ? WHERE job_id = ?',
+                [
+                    $request->title,
+                    $request->description,
+                    $request->location,
+                    $request->salary,
+                    $request->requirements,
+                    $request->company,
+                    $request->email,
+                    $request->jobType,
+                    $id
+                ]
+            );
+    
+            if ($update) {
+                return Response::json(['status' => true, 'message' => 'Job updated successfully'], 200);
+            } else {
+                return Response::json(['status' => false, 'message' => 'Failed to update job']);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error updating job: ' . $e->getMessage());
+            return Response::json(['status' => false, 'message' => 'Failed to update job']);
         }
     }
-
+    
     /**
-     * Remove the specified job from storage.
-     */
-    public function destroy(string $id)
-    {
+    * Remove the specified job from storage.
+    */
+
+    public function destroy( string $id ) {
         // Delete the job from the database
-        $delete = DB::delete('DELETE FROM jobs WHERE job_id = ?', [$id]);
+        $delete = DB::delete( 'DELETE FROM jobs WHERE job_id = ?', [ $id ] );
 
         // Check if the deletion was successful
-        if ($delete) {
-            return Response::json(['status' => true, 'message' => 'Job deleted successfully'], 200);
+        if ( $delete ) {
+            return Response::json( [ 'status' => true, 'message' => 'Job deleted successfully' ], 200 );
         } else {
-            return Response::json(['status' => false, 'message' => 'Failed to delete job'], 500);
+            return Response::json( [ 'status' => false, 'message' => 'Failed to delete job' ], 500 );
         }
     }
 }
